@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, Text, TextInput, Platform, Keyboard, Pressable, Alert, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
 
-const Onboarding = () => {
+const Onboarding = ({ navigation }) => {
     const [email, onChangeEmail] = useState('');
     const [name, onChangeName] = useState('');
 
@@ -24,7 +24,7 @@ const Onboarding = () => {
             </KeyboardAvoidingView>
             </TouchableWithoutFeedback> 
             <View style={onboardingStyles.footer}>
-            <Pressable style={onboardingStyles.button}>
+            <Pressable style={onboardingStyles.button} onPress={() => navigation.navigate('Profile')}>
                 <Text style={onboardingStyles.buttonText}>Next</Text>
             </Pressable>
             </View>

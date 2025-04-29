@@ -19,7 +19,7 @@ const Onboarding = ({ navigation }) => {
                     <Text style={onboardingStyles.bodyText}>First Name</Text>
                     <TextInput style={onboardingStyles.inputBox} value={name} onChangeText={onChangeName} placeholder={'Name'} />
                     <Text style={onboardingStyles.bodyText}>Email</Text>
-                    <TextInput style={onboardingStyles.inputBox} value={email} onChangeText={onChangeEmail} placeholder={'email'} keyboardType={'email-address'} />
+                    <TextInput style={onboardingStyles.inputBox} value={email} onChangeText={onChangeEmail} placeholder={'Email'} keyboardType={'email-address'} />
                 </View> 
             </KeyboardAvoidingView>
             </TouchableWithoutFeedback> 
@@ -77,7 +77,7 @@ const onboardingStyles = StyleSheet.create({
         borderRadius: 8,
         borderColor: 'black',
         backgroundColor: 'white'
-      },
+    },
     footer: {
         flex: 1,
         paddingRight: 30,

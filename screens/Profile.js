@@ -3,7 +3,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { StyleSheet, Text, View, TextInput, Switch, Pressable, Image, Alert, ScrollView } from "react-native";
 
 const Profile = () => {
-    // const [avatar, setAvatar] = useState<string | null>(null);
     const [avatar, setAvatar] = useState(null);
     const [firstName, onChangeFirstName] = useState('');
     const [lastName, onChangeLastName] = useState('');

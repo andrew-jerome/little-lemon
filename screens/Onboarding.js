@@ -1,9 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AppContext } from '../AppContext';
 import { View, StyleSheet, Image, Text, TextInput, Platform, Keyboard, Pressable, Alert, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Onboarding = ({ navigation }) => {
+const Onboarding = () => {
     const [email, onChangeEmail] = useState('');
     const [name, onChangeName] = useState('');
+    const { setState } = useContext(AppContext);
+
+    const finishOnboard = async () => {
+        try {
+          await AsyncStorage.setItem('isOnboarded', 'true');
+          setState((prev) => ({
+            ...prev,
+            isOnboarded: true
+          }));
+        } catch (e) {
+          Alert.alert("Error", e.message);
+        }
+      };
 
     return (
         <View style={onboardingStyles.container}>
@@ -24,7 +39,7 @@ const Onboarding = ({ navigation }) => {
             </KeyboardAvoidingView>
             </TouchableWithoutFeedback> 
             <View style={onboardingStyles.footer}>
-            <Pressable style={onboardingStyles.button} onPress={() => navigation.navigate('Profile')}>
+            <Pressable style={onboardingStyles.button} onPress={finishOnboard}>
                 <Text style={onboardingStyles.buttonText}>Next</Text>
             </Pressable>
             </View>

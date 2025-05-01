@@ -5,11 +5,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, TextInput, Switch, Pressable, Image, Alert, ScrollView } from "react-native";
 
 const Profile = () => {
-    const [avatar, setAvatar] = useState(null);
-    // const [firstName, onChangeFirstName] = useState('');
-    // const [lastName, onChangeLastName] = useState('');
-    // const [email, onChangeEmail] = useState('');
-    // const [number, onChangeNumber] = useState('');
     const [personalInfo, setPersonalInfo] = useState({
         firstName: '',
         lastName: '',
@@ -20,14 +15,7 @@ const Profile = () => {
         isNewsletter: false,
         avatar: null
     })
-    // const [isOrderStatus, setOrderStatus] = useState(false);
-    // const [isSpecialOffers, setSpecialOffers] = useState(false);
-    // const [isNewsletter, setNewsletter] = useState(false);
     const { setState } = useContext(AppContext);
-
-    // const toggleOrderStatus = () => setOrderStatus(previousState => !previousState)
-    // const toggleSpecialOffers = () => setSpecialOffers(previousState => !previousState)
-    // const toggleNewsletter = () => setNewsletter(previousState => !previousState)
 
     useEffect(() => {
         (async () => {

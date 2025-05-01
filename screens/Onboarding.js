@@ -6,19 +6,30 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Onboarding = () => {
     const [email, onChangeEmail] = useState('');
     const [name, onChangeName] = useState('');
+    const [onboardInfo, setOnboardInfo] = useState({
+        firstName: '',
+        email: ''
+    })
     const { setState } = useContext(AppContext);
 
     const finishOnboard = async () => {
         try {
-          await AsyncStorage.setItem('isOnboarded', 'true');
-          setState((prev) => ({
-            ...prev,
-            isOnboarded: true
-          }));
+            await AsyncStorage.setItem('personalInfo', JSON.stringify(onboardInfo))
+            await AsyncStorage.setItem('isOnboarded', 'true');
+            setState((prev) => ({
+                ...prev,
+                isOnboarded: true
+            }));
         } catch (e) {
-          Alert.alert("Error", e.message);
+            Alert.alert("Error", e.message);
         }
-      };
+    };
+    
+    const updateState = (key) => (value) =>
+        setOnboardInfo((prevState) => ({
+            ...prevState,
+            [key]: value
+        }));
 
     return (
         <View style={onboardingStyles.container}>
@@ -32,9 +43,9 @@ const Onboarding = () => {
                 </View>
                 <View style={onboardingStyles.sectionBottom}>
                     <Text style={onboardingStyles.bodyText}>First Name</Text>
-                    <TextInput style={onboardingStyles.inputBox} value={name} onChangeText={onChangeName} placeholder={'Name'} />
+                    <TextInput style={onboardingStyles.inputBox} value={onboardInfo.firstName} onChangeText={updateState('firstName')} placeholder={'Name'} />
                     <Text style={onboardingStyles.bodyText}>Email</Text>
-                    <TextInput style={onboardingStyles.inputBox} value={email} onChangeText={onChangeEmail} placeholder={'Email'} keyboardType={'email-address'} />
+                    <TextInput style={onboardingStyles.inputBox} value={onboardInfo.email} onChangeText={updateState('email')} placeholder={'Email'} keyboardType={'email-address'} />
                 </View> 
             </KeyboardAvoidingView>
             </TouchableWithoutFeedback> 

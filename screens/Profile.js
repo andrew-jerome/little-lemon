@@ -1,37 +1,13 @@
 import React, { useState, useContext, useEffect } from "react";
 import * as ImagePicker from 'expo-image-picker';
-import { AppContext } from '../AppContext';
+import { AppContext } from '../contexts/AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, TextInput, Switch, Pressable, Image, Alert, ScrollView } from "react-native";
+import { UserContext } from "../contexts/UserContext";
 
 const Profile = () => {
-    const [personalInfo, setPersonalInfo] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        number: '',
-        isOrderStatus: false,
-        isSpecialOffers: false,
-        isNewsletter: false,
-        avatar: null
-    })
+    const { personalInfo, setPersonalInfo} = useContext(UserContext)
     const { setState } = useContext(AppContext);
-
-    useEffect(() => {
-        (async () => {
-          try {
-            const jsonValue = await AsyncStorage.getItem('personalInfo');
-            const value = jsonValue != null ? JSON.parse(jsonValue) : {};
-
-            setPersonalInfo((prev) => ({
-                ...prev,
-                ...value
-            }))
-          } catch (e) {
-            Alert.alert(`An error occurred: ${e.message}`);
-          }
-        })();
-      }, []);
 
     const pickAvatar = async() => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();

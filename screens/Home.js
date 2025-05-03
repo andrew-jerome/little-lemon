@@ -131,7 +131,7 @@ const Home = () => {
 
     return (
         <View style={homeStyles.container}>
-            {/* <Button title="Reset Data" onPress={resetAppStorage} /> */}
+            <Button title="Reset Data" onPress={resetAppStorage} />
             <View style={homeStyles.infoSection}>
                 <Text style={homeStyles.infoHeader}>Little Lemon</Text>
                 <View style={homeStyles.infoRow}>

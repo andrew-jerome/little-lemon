@@ -4,9 +4,13 @@ import { AppContext } from '../contexts/AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, TextInput, Switch, Pressable, Image, Alert, ScrollView } from "react-native";
 import { UserContext } from "../contexts/UserContext";
+import { validateEmail, validateName, validatePhone, validatePersonalInfo } from '../utils';
 
 const Profile = () => {
-    const { personalInfo, setPersonalInfo} = useContext(UserContext)
+    const [nameTouched, setNameTouched] = useState(false);
+    const [emailTouched, setEmailTouched] = useState(false);
+    const [numberTouched, setNumberTouched] = useState(false);
+    const { personalInfo, setPersonalInfo} = useContext(UserContext);
     const { setState } = useContext(AppContext);
 
     const pickAvatar = async() => {
@@ -118,7 +122,7 @@ const Profile = () => {
                         <Text style={profileStyles.placeholderText}>{(personalInfo.firstName[0] || '').toUpperCase()}{(personalInfo.lastName[0] || '').toUpperCase()}</Text>
                     </View>
                 )}
-                <Pressable style={profileStyles.editButton} onPress={pickAvatar}>
+                <Pressable style={profileStyles.editButtonEnabled} onPress={pickAvatar}>
                     <Text style={profileStyles.editButtonText}>Change</Text>
                 </Pressable>
                 <Pressable style={profileStyles.removeButton} onPress={removeAvatar}>
@@ -126,13 +130,22 @@ const Profile = () => {
                 </Pressable>
             </View>
             <Text style={profileStyles.bodyText}>First Name</Text>
-            <TextInput style={profileStyles.inputBox} value={personalInfo.firstName} onChangeText={updateState('firstName')} placeholder={'First Name'} />
+            {nameTouched && !validateName(personalInfo.firstName) && (
+                <Text style={profileStyles.warning}>*Must be a valid name (only letters A-Z)</Text>
+            )}
+            <TextInput style={profileStyles.inputBox} value={personalInfo.firstName} onChangeText={updateState('firstName')} placeholder={'First Name'} onBlur={() => setNameTouched(true)}/>
             <Text style={profileStyles.bodyText}>Last Name</Text>
             <TextInput style={profileStyles.inputBox} value={personalInfo.lastName} onChangeText={updateState('lastName')} placeholder={'Last Name'} />
             <Text style={profileStyles.bodyText}>Email</Text>
-            <TextInput style={profileStyles.inputBox} value={personalInfo.email} onChangeText={updateState('email')} placeholder={'Email'} />
+            {emailTouched && !validateEmail(personalInfo.email) && (
+                <Text style={profileStyles.warning}>*Must be a valid email</Text>
+            )}
+            <TextInput style={profileStyles.inputBox} value={personalInfo.email} onChangeText={updateState('email')} placeholder={'Email'} keyboardType='email-address' onBlur={() => setEmailTouched(true)}/>
             <Text style={profileStyles.bodyText}>Phone Number</Text>
-            <TextInput style={profileStyles.inputBox} value={personalInfo.number} onChangeText={updateState('number')} placeholder={'Phone Number'} />
+            {numberTouched && !validatePhone(personalInfo.number) && (
+                <Text style={profileStyles.warning}>*Must be a valid phone number</Text>
+            )}
+            <TextInput style={profileStyles.inputBox} value={personalInfo.number} onChangeText={updateState('number')} placeholder={'Phone Number'} keyboardType='phone-pad' onBlur={() => setNumberTouched(true)}/>
             <Text style={profileStyles.headerText}>Email Notifications</Text>
             <View style={profileStyles.switchContainer}>
                 <Switch 
@@ -165,11 +178,11 @@ const Profile = () => {
                 <Pressable style={profileStyles.removeButton} onPress={resetState}>
                     <Text style={profileStyles.removeButtonText}>Discard</Text>
                 </Pressable>
-                <Pressable style={profileStyles.editButton} onPress={storePersonalInfo}>
+                <Pressable style={!validatePersonalInfo(personalInfo) ? profileStyles.editButtonDisabled : profileStyles.editButtonEnabled} onPress={storePersonalInfo} disabled={!validatePersonalInfo(personalInfo)}>
                     <Text style={profileStyles.editButtonText}>Save Changes</Text>
                 </Pressable>
             </View>
-            <Pressable style={profileStyles.logout} onPress={logOut}>
+            <Pressable style={profileStyles.logout} onPress={logOut} >
                 <Text style={profileStyles.logoutText}>Log out</Text>
             </Pressable>
         </ScrollView>    
@@ -195,6 +208,11 @@ const profileStyles = StyleSheet.create({
         fontFamily: 'Karla-Regular',
         color: '#333333'
     },
+    warning: {
+        fontSize: 16,
+        fontFamily: 'Karla-Regular',
+        color: '#495E57'
+    },
     avatarContainer: {
         marginTop: 5,
         flexDirection: 'row',
@@ -214,13 +232,22 @@ const profileStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    editButton: {
+    editButtonEnabled: {
         paddingVertical: 10,
         paddingHorizontal: 30,
         borderRadius: 10,
         marginHorizontal: 10,
         marginVertical: 15,
         backgroundColor: '#495E57',
+        alignItems: 'center'
+    },
+    editButtonDisabled: {
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        borderRadius: 10,
+        marginHorizontal: 10,
+        marginVertical: 15,
+        backgroundColor: '#767577',
         alignItems: 'center'
     },
     editButtonText: {

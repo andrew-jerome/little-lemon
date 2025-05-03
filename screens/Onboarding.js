@@ -3,20 +3,17 @@ import { AppContext } from '../contexts/AppContext';
 import { UserContext } from "../contexts/UserContext";
 import { View, StyleSheet, Image, Text, TextInput, Platform, Keyboard, Pressable, Alert, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { validateEmail, validateName, validatePersonalInfo } from '../utils';
 
 const Onboarding = () => {
-    const [email, onChangeEmail] = useState('');
-    const [name, onChangeName] = useState('');
-    const [onboardInfo, setOnboardInfo] = useState({
-        firstName: '',
-        email: ''
-    })
+    const [nameTouched, setNameTouched] = useState(false);
+    const [emailTouched, setEmailTouched] = useState(false);
     const { personalInfo, setPersonalInfo} = useContext(UserContext)
     const { setState } = useContext(AppContext);
 
     const finishOnboard = async () => {
         try {
-            await AsyncStorage.setItem('personalInfo', JSON.stringify(onboardInfo))
+            await AsyncStorage.setItem('personalInfo', JSON.stringify(personalInfo))
             await AsyncStorage.setItem('isOnboarded', 'true');
             setState((prev) => ({
                 ...prev,
@@ -45,14 +42,20 @@ const Onboarding = () => {
                 </View>
                 <View style={onboardingStyles.sectionBottom}>
                     <Text style={onboardingStyles.bodyText}>First Name</Text>
-                    <TextInput style={onboardingStyles.inputBox} value={personalInfo.firstName} onChangeText={updateState('firstName')} placeholder={'Name'} />
+                    <TextInput style={onboardingStyles.inputBox} value={personalInfo.firstName} onChangeText={updateState('firstName')} placeholder={'Name'} onBlur={() => setNameTouched(true)} />
+                    {nameTouched && !validateName(personalInfo.firstName) && (
+                        <Text style={onboardingStyles.warning}>*Please enter a valid name (only letters A-Z)</Text>
+                    )}
                     <Text style={onboardingStyles.bodyText}>Email</Text>
-                    <TextInput style={onboardingStyles.inputBox} value={personalInfo.email} onChangeText={updateState('email')} placeholder={'Email'} keyboardType={'email-address'} />
+                    <TextInput style={onboardingStyles.inputBox} value={personalInfo.email} onChangeText={updateState('email')} placeholder={'Email'} keyboardType={'email-address'} onBlur={() => setEmailTouched(true)}/>
+                    {emailTouched && !validateEmail(personalInfo.email) && (
+                        <Text style={onboardingStyles.warning}>*Please enter a valid email address</Text>
+                    )}
                 </View> 
             </KeyboardAvoidingView>
             </TouchableWithoutFeedback> 
             <View style={onboardingStyles.footer}>
-            <Pressable style={onboardingStyles.button} onPress={finishOnboard}>
+            <Pressable style={!validatePersonalInfo(personalInfo) ? onboardingStyles.buttonDisabled : onboardingStyles.buttonEnabled} onPress={finishOnboard} disabled={!validatePersonalInfo(personalInfo)}>
                 <Text style={onboardingStyles.buttonText}>Next</Text>
             </Pressable>
             </View>
@@ -86,7 +89,7 @@ const onboardingStyles = StyleSheet.create({
     },
     sectionBottom: {
         flex: 2,
-        width: '75%',
+        width: '90%',
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -97,7 +100,7 @@ const onboardingStyles = StyleSheet.create({
     },
     inputBox: {
         height: 40,
-        width: '100%',
+        width: '80%',
         padding: 10,
         margin: 10,
         fontSize: 20,
@@ -113,7 +116,7 @@ const onboardingStyles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'flex-start'
     },
-    button: {
+    buttonEnabled: {
         paddingVertical: 10,
         paddingHorizontal: 30,
         borderRadius: 10,
@@ -124,5 +127,17 @@ const onboardingStyles = StyleSheet.create({
         fontFamily: 'MarkaziText-Regular',
         color: '#F4CE14',
         fontSize: 32
+    },
+    buttonDisabled: {
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        borderRadius: 10,
+        backgroundColor: '#767577',
+        alignItems: 'center'
+    },
+    warning: {
+        fontFamily: 'MarkaziText-Regular',
+        color: '#F4CE14',
+        fontSize: 16
     }
 })

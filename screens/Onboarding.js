@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../contexts/AppContext';
+import { UserContext } from "../contexts/UserContext";
 import { View, StyleSheet, Image, Text, TextInput, Platform, Keyboard, Pressable, Alert, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -10,6 +11,7 @@ const Onboarding = () => {
         firstName: '',
         email: ''
     })
+    const { personalInfo, setPersonalInfo} = useContext(UserContext)
     const { setState } = useContext(AppContext);
 
     const finishOnboard = async () => {
@@ -26,7 +28,7 @@ const Onboarding = () => {
     };
     
     const updateState = (key) => (value) =>
-        setOnboardInfo((prevState) => ({
+        setPersonalInfo((prevState) => ({
             ...prevState,
             [key]: value
         }));
@@ -43,9 +45,9 @@ const Onboarding = () => {
                 </View>
                 <View style={onboardingStyles.sectionBottom}>
                     <Text style={onboardingStyles.bodyText}>First Name</Text>
-                    <TextInput style={onboardingStyles.inputBox} value={onboardInfo.firstName} onChangeText={updateState('firstName')} placeholder={'Name'} />
+                    <TextInput style={onboardingStyles.inputBox} value={personalInfo.firstName} onChangeText={updateState('firstName')} placeholder={'Name'} />
                     <Text style={onboardingStyles.bodyText}>Email</Text>
-                    <TextInput style={onboardingStyles.inputBox} value={onboardInfo.email} onChangeText={updateState('email')} placeholder={'Email'} keyboardType={'email-address'} />
+                    <TextInput style={onboardingStyles.inputBox} value={personalInfo.email} onChangeText={updateState('email')} placeholder={'Email'} keyboardType={'email-address'} />
                 </View> 
             </KeyboardAvoidingView>
             </TouchableWithoutFeedback> 

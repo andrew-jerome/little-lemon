@@ -65,15 +65,43 @@ const Home = () => {
       }
 
     // store the image for a menu item for offline use
-    async function downloadImage(imageName) {
-        const fileURI = FileSystem.documentDirectory + imageName
-        const URL = `https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/${imageName}?raw=true`
+    // async function downloadImage(imageName) {
+    //     if (imageName == 'lemonDessert.jpg') {
+    //         imageName = 'lemonDessert 2.jpg'
+    //     }
+    //     const fileURI = FileSystem.documentDirectory + imageName
+    //     const URL = `https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/${imageName}?raw=true`
 
-        const download = await FileSystem.downloadAsync(URL, fileURI);
-        console.log(download.uri)
+    //     const download = await FileSystem.downloadAsync(URL, fileURI);
+    //     console.log(download.uri)
 
-        return download.uri;
-    }
+    //     return download.uri;
+    // }
+    async function downloadImage(imageName, retries = 2) {
+        const fileURI = FileSystem.documentDirectory + imageName;
+        const URL = `https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/${imageName}?raw=true`;
+      
+        try {
+          const download = await FileSystem.downloadAsync(URL, fileURI);
+      
+          const fileInfo = await FileSystem.getInfoAsync(download.uri);
+          if (!fileInfo.exists || fileInfo.size === 0) {
+            throw new Error('Downloaded file is empty or missing.');
+          }
+      
+          console.log(`✅ Image downloaded: ${imageName}`);
+          return download.uri;
+        } catch (err) {
+          console.warn(`❌ Failed to download ${imageName}: ${err.message}`);
+      
+          if (retries > 0) {
+            console.log(`🔁 Retrying download for ${imageName}...`);
+            return await downloadImage(imageName, retries - 1);
+          }
+      
+          return null;
+        }
+      }
 
     // get the data for menuItems, either from the API (if nothing yet stored) or from the SQLite database
     useEffect(() => {
@@ -103,6 +131,7 @@ const Home = () => {
 
     return (
         <View style={homeStyles.container}>
+            {/* <Button title="Reset Data" onPress={resetAppStorage} /> */}
             <View style={homeStyles.infoSection}>
                 <Text style={homeStyles.infoHeader}>Little Lemon</Text>
                 <View style={homeStyles.infoRow}>

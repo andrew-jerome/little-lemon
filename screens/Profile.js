@@ -4,7 +4,7 @@ import { AppContext } from '../contexts/AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, TextInput, Switch, Pressable, Image, Alert, ScrollView } from "react-native";
 import { UserContext } from "../contexts/UserContext";
-import { validateEmail, validateName, validatePhone, validatePersonalInfo } from '../utils';
+import { validateEmail, validateName, validatePhone, validatePersonalInfo } from '../utils/validation';
 
 const Profile = () => {
     const [nameTouched, setNameTouched] = useState(false);

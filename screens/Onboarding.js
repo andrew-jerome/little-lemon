@@ -3,7 +3,7 @@ import { AppContext } from '../contexts/AppContext';
 import { UserContext } from "../contexts/UserContext";
 import { View, StyleSheet, Image, Text, TextInput, Platform, Keyboard, Pressable, Alert, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { validateEmail, validateName, validatePersonalInfo } from '../utils';
+import { validateEmail, validateName, validatePersonalInfo } from '../utils/validation';
 
 const Onboarding = () => {
     const [nameTouched, setNameTouched] = useState(false);

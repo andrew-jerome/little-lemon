@@ -9,8 +9,8 @@ export async function createTable() {
 
 // return every item from the table menu items
 export async function getMenuItems() {
-    const allRows = (await db).getAllAsync('select * from menuitems');
-    return allRows;
+    const data = (await db).getAllAsync('select * from menuitems');
+    return data;
 }
 
 // save all items of the array menuItems into the database table menu items
@@ -24,4 +24,17 @@ export async function saveMenuItems(menuItems) {
     });
 
     await Promise.all(insertPromises);
+}
+
+export async function filterByCategories(activeCategories) {
+    const dbInstance = await db;
+    const lowerCase = activeCategories.map(cat => cat.toLowerCase());
+    const placeholders = lowerCase.map(() => '?').join(', ');
+
+    try {
+        const data = dbInstance.getAllAsync(`select * from menuitems where category in (${placeholders})`, lowerCase);
+        return data;
+    } catch (e) {
+        console.log('Error fetching data: ', e);
+    }
 }

@@ -26,13 +26,16 @@ export async function saveMenuItems(menuItems) {
     await Promise.all(insertPromises);
 }
 
-export async function filterByCategories(activeCategories) {
+// return data filtered through the query and the active categories
+export async function filterByCategories(query, activeCategories) {
     const dbInstance = await db;
-    const lowerCase = activeCategories.map(cat => cat.toLowerCase());
-    const placeholders = lowerCase.map(() => '?').join(', ');
+    const lowerCategories = activeCategories.map(cat => cat.toLowerCase());
+    const lowerQuery = `%${query.toLowerCase()}%`;
+    const placeholders = lowerCategories.map(() => '?').join(', ');
+    const params = [...lowerCategories, lowerQuery]
 
     try {
-        const data = dbInstance.getAllAsync(`select * from menuitems where category in (${placeholders})`, lowerCase);
+        const data = dbInstance.getAllAsync(`select * from menuitems where category in (${placeholders}) and lower(name) like ?`, params);
         return data;
     } catch (e) {
         console.log('Error fetching data: ', e);

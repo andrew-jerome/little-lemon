@@ -1,9 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback, useMemo } from 'react';
 import { Text, View, StyleSheet, Image, FlatList, Button, Pressable } from 'react-native'
 import { createTable, getMenuItems, saveMenuItems, filterByCategories } from '../database';
 import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUpdateEffect } from '../utils/effects';
+import { Searchbar } from 'react-native-paper';
+import debounce from 'lodash.debounce';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const API_URL = 'https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json';
@@ -34,6 +36,8 @@ const Filter = ({ name, selections, index, onChange }) => (
 
 const Home = () => {
     const [data, setData] = useState([]);
+    const [searchBarText, setSearchBarText] = useState('');
+    const [query, setQuery] = useState('');
     const [filterSelections, setFilterSelections] = useState(sections.map(() => false));
 
     // fetch the data from the API URL
@@ -85,31 +89,6 @@ const Home = () => {
 
         return download.uri;
     }
-    // async function downloadImage(imageName, retries = 2) {
-    //     const fileURI = FileSystem.documentDirectory + imageName;
-    //     const URL = `https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/${imageName}?raw=true`;
-      
-    //     try {
-    //       const download = await FileSystem.downloadAsync(URL, fileURI);
-      
-    //       const fileInfo = await FileSystem.getInfoAsync(download.uri);
-    //       if (!fileInfo.exists || fileInfo.size === 0) {
-    //         throw new Error('Downloaded file is empty or missing.');
-    //       }
-      
-    //       console.log(`✅ Image downloaded: ${imageName}`);
-    //       return download.uri;
-    //     } catch (err) {
-    //       console.warn(`❌ Failed to download ${imageName}: ${err.message}`);
-      
-    //       if (retries > 0) {
-    //         console.log(`🔁 Retrying download for ${imageName}...`);
-    //         return await downloadImage(imageName, retries - 1);
-    //       }
-      
-    //       return null;
-    //     }
-    //   }
 
     // get the data for menuItems, either from the API (if nothing yet stored) or from the SQLite database
     useEffect(() => {
@@ -121,16 +100,18 @@ const Home = () => {
                 if (!menuItems.length) {
                     menuItems = await fetchData();
                     menuItems = await Promise.all(
-                        menuItems.map(async (item) => {
+                        menuItems.map(async (item, index) => {
                         localImageURI = await downloadImage(item.image)
                         return {
                             ...item,
+                            tempId: index,
                             image: localImageURI
                         }
                     }))
                     saveMenuItems(menuItems);
                 }
                 setData(menuItems);
+                console.log(data)
             } catch (e) {
                 Alert.alert(e.message);
             }
@@ -141,26 +122,36 @@ const Home = () => {
     useUpdateEffect(() => {
         (async () => {
           const activeCategories = sections.filter((s, i) => {
-            // If all filters are deselected, all categories are active
             if (filterSelections.every((item) => item === false)) {
               return true;
             }
             return filterSelections[i];
           });
           try {
-            const menuItems = await filterByCategories(activeCategories);
+            const menuItems = await filterByCategories(query, activeCategories);
             setData(menuItems);
           } catch (e) {
             Alert.alert(e.message);
           }
         })();
-    }, [filterSelections]);
+    }, [filterSelections, query]);
 
     // update filter selections
     const handleFiltersChange = async (index) => {
         const arrayCopy = [...filterSelections];
         arrayCopy[index] = !filterSelections[index];
         setFilterSelections(arrayCopy);
+    };
+
+    const lookup = useCallback((q) => {
+        setQuery(q);
+      }, []);
+    
+    const debouncedLookup = useMemo(() => debounce(lookup, 500), [lookup]);
+
+    const handleSearchChange = (text) => {
+        setSearchBarText(text);
+        debouncedLookup(text);
     };
 
     return (
@@ -175,6 +166,17 @@ const Home = () => {
                     </View>
                     <Image style={homeStyles.infoImage} source={require('../assets/Hero image.png')}></Image>                
                 </View>
+                <Searchbar
+                    placeholder="Search"
+                    placeholderTextColor="#333333"
+                    mode="view"
+                    onChangeText={handleSearchChange}
+                    value={searchBarText}
+                    style={homeStyles.searchBar}
+                    iconColor="#333333"
+                    inputStyle={homeStyles.searchBarText}
+                    shadow={0}
+                />
             </View>
             <View>
                 <Text style={homeStyles.deliveryHeader}>ORDER FOR DELIVERY!</Text>
@@ -186,20 +188,21 @@ const Home = () => {
                     renderItem={({ item, index }) => (
                         <Filter name={item} selections={filterSelections} index={index} onChange={handleFiltersChange}/>
                     )}
-                    showsHorizontalScrollIndicator={false}/>
+                    showsHorizontalScrollIndicator={false}
+                />
                 <View style={homeStyles.itemSeparator}/>
             </View>
             <FlatList
                 style={homeStyles.menuList}
                 data={data}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id || item.tempId}
                 renderItem={({ item }) => (
                     <Item name={item.name} price={item.price} description={item.description} image={item.image} />
                 )}
                 ItemSeparatorComponent={() => (
                     <View style={homeStyles.itemSeparator}/>
                 )}
-             />
+            />
         </View>
     )
 }
@@ -247,6 +250,17 @@ const homeStyles = StyleSheet.create({
         borderRadius: 10,
         resizeMode: 'cover'
     },
+    searchBar: {
+        backgroundColor: '#EDEFEE',
+        shadowRadius: 0,
+        shadowOpacity: 0,
+    },
+    searchBarText: {
+        fontFamily: 'MarkaziText-Regular',
+        color: '#333333',
+        fontSize: 20,
+        minHeight: 0
+    },  
     menuList: {
         width: '100%',
         marginBottom: 50

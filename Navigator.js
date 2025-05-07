@@ -22,10 +22,14 @@ const Navigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{headerTitle: () => (
+          <Image source={require('./assets/Logo.png')} style={(navigationStyles.logo)}/>
+        )}}
+      >
         {state.isOnboarded ? (
           <>
-          <Stack.Screen name="Home" component={Home} options={({ navigation }) => ({headerRight: () => (
+          <Stack.Screen name = "Home" component={Home} options={({ navigation }) => ({headerRight: () => (
             <>
             {personalInfo.avatar ? (
               <Pressable onPress={() => navigation.navigate('Profile')}>
@@ -66,5 +70,8 @@ const navigationStyles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
     fontWeight: 'bold'
+  },
+  logo: {
+    resizeMode: 'contain'
   }
 })

@@ -197,19 +197,18 @@ const profileStyles = StyleSheet.create({
         marginHorizontal: 15,
     },
     headerText: {
-        fontSize: 24,
-        fontFamily: 'MarkaziText-Regular',
+        fontSize: 20,
         fontWeight: 'bold',
         color: '#333333',
         marginVertical: 15
     },
     bodyText: {
-        fontSize: 16,
+        fontSize: 18,
         fontFamily: 'Karla-Regular',
         color: '#333333'
     },
     warning: {
-        fontSize: 16,
+        fontSize: 18,
         fontFamily: 'Karla-Regular',
         color: '#495E57'
     },
@@ -252,9 +251,8 @@ const profileStyles = StyleSheet.create({
     },
     editButtonText: {
         color: '#EDEFEE',
-        fontSize: 16,
+        fontSize: 24,
         fontFamily: 'MarkaziText-Regular',
-        fontWeight: 'bold',
     },
     removeButton: {
         paddingVertical: 10,
@@ -269,9 +267,8 @@ const profileStyles = StyleSheet.create({
     },
     removeButtonText: {
         color: '#333333',
-        fontSize: 16,
+        fontSize: 24,
         fontFamily: 'MarkaziText-Regular',
-        fontWeight: 'bold',
     },
     inputBox: {
         height: 40,
@@ -308,9 +305,8 @@ const profileStyles = StyleSheet.create({
         alignItems: 'center'
     },
     logoutText: {
-        fontSize: 16,
+        fontSize: 24,
         fontFamily: 'MarkaziText-Regular',
-        fontWeight: 'bold',
         color: '#333333',
     }
 })

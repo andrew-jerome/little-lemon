@@ -18,7 +18,7 @@ const Item = ({ name, price, description, image }) => (
         <View style={homeStyles.itemRow}>
             <View style={homeStyles.itemInfo}>
                 <Text style={homeStyles.itemBody} numberOfLines={2}>{description}</Text>
-                <Text style={homeStyles.itemPrice}>${price}</Text>
+                <Text style={homeStyles.itemBody}>${price}</Text>
             </View> 
             <View style={homeStyles.imageWrapper}>
                 <Image style={homeStyles.itemImage} source={{ uri: image }} onError={(e) => console.warn(`🛑 Image failed to load: ${image}`, e.nativeEvent.error)}/>
@@ -111,7 +111,6 @@ const Home = () => {
                     saveMenuItems(menuItems);
                 }
                 setData(menuItems);
-                console.log(data)
             } catch (e) {
                 Alert.alert(e.message);
             }
@@ -158,7 +157,9 @@ const Home = () => {
         <View style={homeStyles.container}>
             {/* <Button title="Reset Data" onPress={resetAppStorage} /> */}
             <View style={homeStyles.infoSection}>
-                <Text style={homeStyles.infoHeader}>Little Lemon</Text>
+                <View style={homeStyles.headerContainer}>
+                    <Text style={homeStyles.infoHeader}>Little Lemon</Text>
+                </View>  
                 <View style={homeStyles.infoRow}>
                     <View style={homeStyles.infoText}>
                         <Text style={homeStyles.infoSubheader}>Chicago</Text>
@@ -218,20 +219,22 @@ const homeStyles = StyleSheet.create({
         padding: 15,
         backgroundColor: '#495E57'
     },
-    infoHeader: {
-        fontSize: 40,
-        fontWeight: 'bold',
+    headerContainer: {
+        height: 46,
+    },
+    infoHeader: { 
         fontFamily: 'MarkaziText-Regular',
+        fontSize: 54,
         color: '#F4CE14'
     },
     infoSubheader: {
-        fontSize: 32,
-        fontWeight: 'bold',
+        fontSize: 40,
         fontFamily: 'MarkaziText-Regular',
         color: '#EDEFEE'
     },
     infoBody: {
-        paddingVertical: 20,
+        paddingVertical: 10,
+        marginRight: 5,
         fontSize: 18,
         fontFamily: 'Karla-Regular',
         color: '#EDEFEE'
@@ -256,7 +259,7 @@ const homeStyles = StyleSheet.create({
         shadowOpacity: 0,
     },
     searchBarText: {
-        fontFamily: 'MarkaziText-Regular',
+        fontFamily: 'Karla-Regular',
         color: '#333333',
         fontSize: 20,
         minHeight: 0
@@ -275,7 +278,6 @@ const homeStyles = StyleSheet.create({
         width: '100%'
     },
     itemTitle: {
-        fontFamily: 'MarkaziText-Regular',
         fontWeight: 'bold',
         color: '#333333',
         fontSize: 20,
@@ -284,12 +286,6 @@ const homeStyles = StyleSheet.create({
         fontFamily: 'Karla-Regular',
         fontSize: 18,
         color: '#495E57',
-    },
-    itemPrice: {
-        fontFamily: 'MarkaziText-Regular',
-        fontSize: 18,
-        color: '#495E57',
-        fontWeight: 'bold',
     },
     itemRow: {
         flexDirection: 'row',
@@ -308,7 +304,6 @@ const homeStyles = StyleSheet.create({
         resizeMode: 'cover'
     },
     deliveryHeader: {
-        fontFamily: 'MarkaziText-Regular',
         padding: 15,
         fontSize: 20,
         fontWeight: 'bold',
@@ -325,7 +320,6 @@ const homeStyles = StyleSheet.create({
         borderRadius: 15
     },
     filterTextInactive: {
-        fontFamily: 'MarkaziText-Regular',
         fontSize: 18,
         color: '#EDEFEE',
         fontWeight: 'bold'
@@ -337,7 +331,6 @@ const homeStyles = StyleSheet.create({
         borderRadius: 15
     },
     filterTextActive: {
-        fontFamily: 'MarkaziText-Regular',
         fontSize: 18,
         color: '#F4CE14',
         fontWeight: 'bold'

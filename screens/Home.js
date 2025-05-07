@@ -216,7 +216,9 @@ const homeStyles = StyleSheet.create({
         width: '100%'
     },
     infoSection: {
-        padding: 15,
+        paddingHorizontal: 15,
+        paddingBottom: 15,
+        paddingTop: 5,
         backgroundColor: '#495E57'
     },
     headerContainer: {
